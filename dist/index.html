@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#f3eddf">
+  <meta name="description" content="その一投に、すべてを。物理演算で遊ぶ一人称3Dゴミ投げゲーム。">
+  <meta name="robots" content="noindex,nofollow">
+  <title>BINSHOT — その一投に、すべてを。</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <canvas id="world" aria-label="3Dゲーム画面。ドラッグで左右と角度を調整できます。"></canvas>
+  <div id="vignette"></div><div id="impactFlash"></div>
+  <div id="loading"><div class="load-logo">BIN<span>SHOT</span><i>↗</i></div><p>小さなゴミに、大きなドラマを。</p><div class="loading-bar"><i></i></div><small id="loadMessage">3Dの世界を準備しています</small></div>
+  <header class="topbar"><button id="logo" class="brand" aria-label="タイトルに戻る">BIN<span>SHOT</span><sup>↗</sup></button><div class="top-right"><span class="edition">THE EVERYDAY SPORT</span><button id="sound" class="icon-btn" aria-label="サウンド切り替え">♪</button><button id="help" class="icon-btn" aria-label="遊び方">?</button><button id="pause" class="icon-btn hidden" aria-label="一時停止">Ⅱ</button></div></header>
+
+  <main id="home" class="home">
+    <div class="home-copy"><div class="eyebrow"><i></i> A SMALL TOSS. A BIG MOMENT.</div><h1>その一投に、<br>すべてを<span>。</span></h1><p>ただのゴミ捨てが、ちょっとした名勝負。<br>風を読んで、狙いを定めて。決めるのは、あなたの指先。</p><div class="hero-actions"><button id="start" class="primary">ステージをはじめる <span>↗</span></button><button id="free" class="secondary">フリープレー <span>∞</span></button></div><button id="chooseStage" class="text-btn">ステージを選ぶ <span>→</span></button><div class="home-stats"><div><strong>12</strong><span>STAGES</span></div><div><strong>6</strong><span>TRASH TYPES</span></div><div><strong>∞</strong><span>ONE MORE TRY</span></div></div></div>
+    <div class="scene-caption"><span class="tiny">01 / THE FIRST TOSS</span><strong>あと一歩の距離</strong><span>3.6 m · 風のない午後</span></div>
+    <footer class="home-foot"><span>PHYSICS. TIMING. A LITTLE LUCK.</span><span>一人称 3D / タッチ・マウス対応</span></footer>
+  </main>
+
+  <section id="hud" class="hidden">
+    <div class="stage-panel"><div class="eyebrow" id="stageTag"></div><h2 id="stageName"></h2><div id="stageGoal"></div></div>
+    <div class="round-info"><span id="modeBadge" class="pill">STAGE 01</span><div class="scoreboard"><div><span>IN</span><strong id="makes">0</strong></div><i>/</i><div><span>GOAL</span><strong id="goal">2</strong></div><div class="shots-col"><span>残り</span><strong id="remaining">8</strong></div></div></div>
+    <div class="wind-card"><div><span id="windArrow">→</span><strong id="windValue">0.0</strong><small>m/s</small></div><span id="windLabel">ほぼ無風</span><small id="motionLabel"></small></div>
+    <div id="reticle"><i></i><b></b></div><div id="distanceLabel" class="distance-label">3.6 m</div>
+    <div id="slowTag" class="slow-tag hidden"><i></i> HOLD YOUR BREATH <small>SLOW MOTION</small></div>
+    <div id="throwMessage" class="throw-message hidden"><span id="throwEyebrow"></span><strong id="throwTitle"></strong><p id="throwDetail"></p></div>
+    <div id="aimHint" class="aim-hint">画面をドラッグで照準 · 強さを調整して投げる</div>
+    <div class="bottom-deck" id="deck">
+      <aside class="trash-card"><div class="trash-number" id="trashNumber">01</div><div class="trash-info"><span id="trashEn" class="tiny"></span><h3 id="trashName"></h3><p id="trashNote"></p><div class="trash-metrics"><span id="trashWeight"></span><span id="trashDrag"></span></div></div><div class="combo" id="combo"></div></aside>
+      <div class="shot-card"><div class="shot-top"><div class="style-tabs" id="styles"></div><button id="inputMode" class="chip" title="画面の上向きスワイプで直接投げるモード">操作：調整</button></div>
+        <div class="shot-controls"><label class="power-label"><span>POWER <strong id="powerValue">35</strong><small>%</small></span><input id="power" type="range" min="5" max="100" value="35" aria-label="投げる強さ"></label><button id="throw" class="throw-btn">投げる <span>↗</span></button></div>
+        <div class="fine-controls"><label><span>左右 <b id="yawValue">0°</b></span><input id="yaw" type="range" min="-32" max="32" step="0.1" value="0" aria-label="左右の狙い"></label><label><span>角度 <b id="pitchValue">44°</b></span><input id="pitch" type="range" min="-16" max="17" step="0.2" value="0" aria-label="投げる角度の微調整"></label><label><span>回転 <b id="spinValue">0</b></span><input id="spin" type="range" min="-30" max="30" step="1" value="0" aria-label="左右の回転"></label></div>
+        <div class="deck-foot"><label class="check"><input type="checkbox" id="guide" checked> 短い軌道ガイド</label><span id="styleNote">標準。狙いと強さを素直に伝える。</span><button id="freeSettings" class="text-btn hidden">練習設定 ⚙</button></div>
+      </div>
+    </div>
+    <div id="resultActions" class="result-actions hidden"><button id="replay" class="secondary">↺ リプレイ</button><button id="nextThrow" class="primary">次のゴミへ <span>→</span></button></div>
+  </section>
+
+  <section id="replayUI" class="replay-ui hidden"><div class="replay-top"><span class="pill">● REPLAY</span><strong>もう一度、あの瞬間。</strong></div><div class="replay-bottom"><button id="replayCamera" class="secondary">視点：ゴミ箱カメラ</button><button id="replayPlay" class="icon-btn" aria-label="リプレイ再生と停止">Ⅱ</button><input id="replayProgress" type="range" min="0" max="1000" value="0" aria-label="リプレイの再生位置"><select id="replaySpeed" aria-label="リプレイ速度"><option value="0.35">0.35×</option><option value="0.65" selected>0.65×</option><option value="1">1×</option></select><button id="replayClose" class="primary">戻る →</button></div></section>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-card"><button id="modalClose" class="close" aria-label="閉じる">×</button><div id="modalContent"></div></div></div>
+  <div id="toast" role="status" class="toast hidden"></div><svg id="swipeLine" class="swipe-line"><path id="gesturePath"/></svg>
+<template id="deployInstructions"><div class="eyebrow">GITHUB + CLOUDFLARE ACCESS</div><h2 id="modalTitle">限定公開ガイド</h2><div class="deploy-doc">
+<p>2026年10月25日時点のGitHub / Cloudflare公式ドキュメントをもとにしています。画面の言語によってボタン名が多少異なります。ゲームのプレーはiPhoneのSafariでも可能な構成です。初回の公開設定はPCのほうが操作しやすいですが、1ファイル版ならスマートフォンからのアップロードもできます。</p>
+<h2>1. GitHubにPrivateリポジトリを作る</h2>
+<ol>
+<li><a href="https://github.com/new">https://github.com/new</a> を開き、Repository nameを<code>binshot</code>などにする。</li>
+<li>Visibilityを <strong>Private</strong> にする。Add READMEを有効にして作成する。</li>
+<li>ゲームを次のいずれかでアップロードする。</li>
+</ol>
+<h3>手軽な方法：1ファイル版</h3>
+<ol>
+<li>ダウンロードした<code>BINSHOT-play.html</code>を、ファイルアプリ等で <strong>index.html</strong> に改名する。<code>index.html.txt</code>や<code>index.html.html</code>にならないようにする。</li>
+<li>GitHubのリポジトリのトップで <strong>Add file → Upload files</strong> を選び、<code>index.html</code>をアップロードしてCommit changesする。スマートフォンで操作が表示されない場合はSafariの「デスクトップ用Webサイトを表示」を使う。</li>
+<li>GitHubでREADMEと同じ階層に<code>index.html</code>が見えることを確認する。ゲームに必要なCSSとJavaScriptはすべてこのファイルに含まれている。</li>
+</ol>
+<h3>編集しやすい方法：ソース一式</h3>
+<ol>
+<li><code>BINSHOT.zip</code>を解凍し、その中の<code>BINSHOT-source</code>フォルダーを開く。</li>
+<li>PCのGitHub画面で <strong>Add file → Upload files</strong> を選び、<code>BINSHOT-source</code>フォルダーの<strong>中身</strong>をドラッグしてCommit changesする。ZIPファイル自体はアップロードしない。</li>
+<li>リポジトリ直下に<code>dist</code>フォルダー、<code>package.json</code>、<code>README.md</code>が並び、<code>dist/index.html</code>があることを確認する。</li>
+</ol>
+<p>通常のゲーム運用では1ファイル版とソース版のどちらか一方を選びます。ソース版を変更した場合は<code>dist/</code>が公開対象です。別途作った1ファイル版が自動更新されるわけではありません。</p>
+<h2>2. Cloudflare PagesをGitHubと接続する</h2>
+<ol>
+<li><a href="https://dash.cloudflare.com/">https://dash.cloudflare.com/</a> にログインする。</li>
+<li><strong>Workers &amp; Pages → Create application → Pages → Import an existing Git repository</strong> を選ぶ。Workersのコード生成・Workerデプロイではなく、PagesのGit連携を使う。</li>
+<li>GitHubとの接続画面で対象のPrivateリポジトリを許可し、先ほど作成した<code>binshot</code>を選ぶ。</li>
+<li>ビルド設定を次のとおり入力する。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>1ファイル版</th>
+<th>ソース一式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Production branch</td>
+<td><code>main</code></td>
+<td><code>main</code></td>
+</tr>
+<tr>
+<td>Framework preset</td>
+<td><code>None</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td>Build command</td>
+<td><code>exit 0</code></td>
+<td><code>exit 0</code></td>
+</tr>
+<tr>
+<td>Build output directory</td>
+<td><code>.</code>（リポジトリ直下）</td>
+<td><code>dist</code></td>
+</tr>
+<tr>
+<td>Root directory</td>
+<td>空欄</td>
+<td>空欄</td>
+</tr>
+<tr>
+<td>環境変数</td>
+<td>不要</td>
+<td>不要</td>
+</tr>
+</tbody></table>
+<ol start="5">
+<li>Save and Deployする。デプロイ完了後の<code>https://プロジェクト名.pages.dev</code>がゲームのURL。以後、GitHubの<code>main</code>を更新すると再デプロイされる。</li>
+</ol>
+<p><strong>この時点ではゲームURLは通常公開状態です。Privateリポジトリはソースを隠す設定であり、ゲームURLの閲覧制限ではありません。次のAccess設定まで完了してからURLを共有してください。</strong></p>
+<h2>3. Cloudflare Accessで許可した人だけに限定する</h2>
+<p>独自ドメインなしで、まず<code>pages.dev</code>の本番URLとプレビューURLを両方保護します。</p>
+<ol>
+<li>Pagesの対象プロジェクトを開き、<strong>Settings → General → Enable access policy</strong> を有効にする。画面によってはSettings内にAccess policyが直接表示される。</li>
+<li>作られたポリシーの <strong>Manage</strong> を開く。Zero Trust / Cloudflare Oneの初期設定が必要な場合は画面に従ってチーム名などを設定する。利用可能なプラン・人数上限は自身の契約画面で確認する。</li>
+<li><strong>Access / Access controls → Applications</strong> から、このPagesプロジェクトのアプリケーションを開き、<strong>Configure</strong> を選ぶ。</li>
+<li>Public hostnameで、最初の<code>*.プロジェクト名.pages.dev</code>に含まれる<strong>ワイルドカードのサブドメイン<code>*</code>だけを削除</strong>し、保護対象を<code>プロジェクト名.pages.dev</code>にする。名前の重複エラーが出る場合はApplication nameを<code>BINSHOT production</code>などに変更し、保存する。</li>
+<li>同じアプリケーションのPolicyで、Actionを <strong>Allow</strong>、Include条件を <strong>Emails</strong> にし、<strong>自分と招待したい人の完全なメールアドレスだけ</strong>を登録する。自分のメールも含める。Everyone / Bypassは追加しない。</li>
+<li>メールでログインさせる場合、Zero Trustの <strong>Integrations → Identity providers → Add new identity provider → One-time PIN</strong> を利用できるようにする。アプリケーションのLogin methodsでもOne-time PINを選択可能にする。相手は登録したメールに届くPINでログインする。</li>
+<li>Pagesの <strong>Settings → General → Enable access policy</strong> をもう一度有効にする。これでプレビュー用の<code>*.プロジェクト名.pages.dev</code>を保護するアプリケーションが再作成される。</li>
+<li>AccessのApplicationsに次の<strong>2つ</strong>があることを確認する。プレビュー側にも、手順5と同じ許可メールアドレス・ログイン方法を設定する。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>保護するもの</th>
+<th>ホスト名の例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>本番ゲーム</td>
+<td><code>binshot-xxxx.pages.dev</code></td>
+</tr>
+<tr>
+<td>プレビュー・ブランチ別URL</td>
+<td><code>*.binshot-xxxx.pages.dev</code></td>
+</tr>
+</tbody></table>
+<p>Cloudflareの「Enable access policy」を1回オンにするだけでは、通常はプレビューだけが保護され、本番の<code>プロジェクト名.pages.dev</code>は保護されません。上記の本番設定まで行う必要があります。</p>
+<p>独自ドメインを追加する場合は、Pagesでドメイン接続を完了した後、Zero Trustでその独自ドメインにも別途Self-hostedアプリケーションとAllowポリシーを作ってください。<code>pages.dev</code>の設定だけで独自ドメインが自動的に限定公開になるわけではありません。</p>
+<h2>4. 限定公開できたことを確認する</h2>
+<ol>
+<li>Safariのプライベートブラウズ、またはChromeのシークレットウィンドウで<strong>本番URL</strong>を開く。ゲームが直接表示されず、Cloudflare Accessの認証画面になること。</li>
+<li>許可したメールアドレスで認証するとプレーできること。</li>
+<li>許可していない別のメールアドレスではプレーできないこと。</li>
+<li>Cloudflareのデプロイ詳細からプレビューURLも開き、同様に認証が必要なこと。</li>
+<li>独自ドメインを設定した場合は、そのURLでも同じ確認をする。</li>
+</ol>
+<p>このゲームは静的ファイルだけで動きます。JavaScript内の簡易パスワードではなく、Cloudflare側でアクセスを制御します。一度プレーを許可した相手が保存したファイルまで回収・コピー防止する仕組みではありません。</p>
+<h2>5. iPhoneで遊ぶ</h2>
+<ol>
+<li>本番URLをSafariで開く。ChatGPT内やファイルアプリ内のプレビューで動かない場合は「Safariで開く」を選ぶ。</li>
+<li>Accessにログイン後、ゲームを始める。縦画面・横画面の両方に操作パネルを配置している。</li>
+<li>Safariの共有メニューから「ホーム画面に追加」すると、次回アクセスしやすい。</li>
+<li>サウンドは画面右上の♪で切り替える。最初のタップ後に有効。消音設定・音量も確認する。</li>
+</ol>
+<h2>よくあるつまずき</h2>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>404になる</td>
+<td>公開ディレクトリーに<code>index.html</code>があるか確認。1ファイル版は<code>.</code>、ソース版は<code>dist</code>。フォルダーが二重になっていないか確認する。</td>
+</tr>
+<tr>
+<td>ファイルの一覧だけ／ZIPがダウンロードされる</td>
+<td>ZIPをそのまま置かず、解凍したファイルをアップロードする。</td>
+</tr>
+<tr>
+<td>3Dを起動できない</td>
+<td>WebGL 2を利用できるSafari / Chromeで開く。ファイルのプレビューからHTTPSのURLへ切り替える。</td>
+</tr>
+<tr>
+<td>更新されない</td>
+<td>GitHubのmainを更新したか、Cloudflareのデプロイが成功したかを確認して再読み込みする。</td>
+</tr>
+<tr>
+<td>本番URLだけ誰でも見られる</td>
+<td>プレビュー用のワイルドカード設定だけで止まっている可能性がある。手順3の本番用・プレビュー用の両方を確認する。</td>
+</tr>
+<tr>
+<td>自分も入れない</td>
+<td>Allowポリシーに自分の正しいメールが含まれるか、アプリのログイン方法とOne-time PINが有効か確認する。認証を無効化するのではなく、許可条件を修正する。</td>
+</tr>
+<tr>
+<td>音が出ない</td>
+<td>画面をタップして♪をオンにし、端末の音量・消音設定を確認する。</td>
+</tr>
+<tr>
+<td>ステージ記録が消えた</td>
+<td>記録は端末・ブラウザー別。プライベートブラウズの終了やサイトデータ削除では保存が消える場合がある。</td>
+</tr>
+</tbody></table>
+<h2>公式資料</h2>
+<ul>
+<li>GitHub：リポジトリ作成 <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository">https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository</a></li>
+<li>GitHub：ファイルアップロード <a href="https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository">https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository</a></li>
+<li>Cloudflare：静的HTMLの公開 <a href="https://developers.cloudflare.com/pages/framework-guides/deploy-anything/">https://developers.cloudflare.com/pages/framework-guides/deploy-anything/</a></li>
+<li>Cloudflare：pages.dev本番URLのAccess設定 <a href="https://developers.cloudflare.com/pages/platform/known-issues/#enable-access-on-your-pagesdev-domain">https://developers.cloudflare.com/pages/platform/known-issues/#enable-access-on-your-pagesdev-domain</a></li>
+<li>Cloudflare：プレビューのアクセス制限 <a href="https://developers.cloudflare.com/pages/configuration/preview-deployments/#customize-preview-deployments-access">https://developers.cloudflare.com/pages/configuration/preview-deployments/#customize-preview-deployments-access</a></li>
+<li>Cloudflare：One-time PIN <a href="https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/one-time-pin/">https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/one-time-pin/</a></li>
+</ul>
+<p>公開設定を変更した後は、必ず手順4で本番とプレビューの認証を確認してください。</p>
+</div></template>
+  <script type="module" src="./game.js"></script>
+  <script>window.addEventListener('error',function(e){var m=document.getElementById('loadMessage');if(document.getElementById('loading').style.display!=='none'&&m.textContent==='3Dの世界を準備しています'){m.textContent='読み込みに失敗しました。Safariでページを再読み込みしてください。';console.error(e.error);}});</script>
+</body>
+</html>
