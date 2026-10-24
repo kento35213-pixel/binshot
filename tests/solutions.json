@@ -1,0 +1,1010 @@
+[
+  {
+    "stage": 0,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 22,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 0,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 18.612419588413676,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 0,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 17.54524254754109,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 0,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 25.121427813327582,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 0,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 21.227023294701272,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 0,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 20.65516618934858,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 1,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 32.293653694699216,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 1,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 26,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 1,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 24.322208873260976,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 1,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 37.304821545191515,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 1,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 30.8764621217158,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 1,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 29.80143880679349,
+      "yaw": 0,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 2,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 36.04162145614884,
+      "yaw": -8.842211837215197,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 2,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 28.213454110911652,
+      "yaw": -3.9009006702143463,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 2,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 25.924998128722873,
+      "yaw": -1.9935794905284188,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 2,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 43.64883347213466,
+      "yaw": -12.437506296709927,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 2,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 34.76742921208237,
+      "yaw": -8.291013416047246,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 2,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 33.170889313793104,
+      "yaw": -7.3651748027480295,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 3,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 35.23129351833932,
+      "yaw": -2.5527527910017715,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 3,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 28.37252784230409,
+      "yaw": -0.9518679145912261,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 3,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 26.105505590413195,
+      "yaw": -0.6328843111192363,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 3,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 41.29498449232363,
+      "yaw": -3.9292109040698255,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 3,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 33.64902991817652,
+      "yaw": -2.2268849298413573,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 3,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 32.38604964653102,
+      "yaw": -1.9254030195653848,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 4,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 52.81114388025375,
+      "yaw": -17.295134508984173,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 4,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 36.567050445797804,
+      "yaw": -8.201976102873045,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 4,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 32.02910718582916,
+      "yaw": -4.514437613246144,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 4,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 74.04544273225986,
+      "yaw": -24.78492540101576,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 4,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 51.19837956940279,
+      "yaw": -16.890205954967175,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 4,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 46.80372484939966,
+      "yaw": -14.781927987551036,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 5,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 40.725688042609164,
+      "yaw": 7.097881628074858,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 5,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 32.50079243643485,
+      "yaw": 8.867049217503958,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 5,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 29.880227282928296,
+      "yaw": 9.538279178882036,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 5,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 48.62741990722789,
+      "yaw": 5.955929377662252,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 5,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 39.12945471355131,
+      "yaw": 7.439957167564348,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 5,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 37.55068617994735,
+      "yaw": 7.748401411751395,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 6,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 41.389551959865884,
+      "yaw": -11.193364599307856,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 6,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 32.152014428687366,
+      "yaw": -8.687547954337782,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 6,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 29.347005140741754,
+      "yaw": -7.588137028897462,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 6,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 50.214062123733434,
+      "yaw": -13.05745738256472,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 6,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 39.52467500064567,
+      "yaw": -10.842210174146118,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 6,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 37.72583885583091,
+      "yaw": -10.357016232972024,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 7,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 47.847945888100554,
+      "yaw": -3.9969541343861676,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 7,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 36.57873752698772,
+      "yaw": 0.6397928427601767,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 7,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 33.10464926666934,
+      "yaw": 2.5603236435363423,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 7,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 59.95567372252027,
+      "yaw": -7.725103136202825,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 7,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 45.612264005027775,
+      "yaw": -3.2119697976436052,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 7,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 43.29353235781106,
+      "yaw": -2.221677463206511,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 8,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 3,
+      "power": 79.3272828125473,
+      "yaw": -19.938645179922144,
+      "pitch": 12,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 8,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 53.50165970253785,
+      "yaw": -12.9843253380492,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 8,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 41.14638980126495,
+      "yaw": -7.048564060644734,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 8,
+    "item": 3,
+    "time": 4.2,
+    "aim": {
+      "style": 3,
+      "power": 100,
+      "yaw": -20.893267492939277,
+      "pitch": 12,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 8,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 3,
+      "power": 75.60622605671567,
+      "yaw": -19.43797336116968,
+      "pitch": 12,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 8,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 99.06278917454726,
+      "yaw": -23.914569109315444,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 9,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 50.982500762658475,
+      "yaw": -4.600463430256107,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 9,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 38.34665888604098,
+      "yaw": 0.31084795847615965,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 9,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 34.64727355140329,
+      "yaw": 2.024408087596448,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 9,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 64.26900345946626,
+      "yaw": -8.140633586248775,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 9,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 48.44101616131845,
+      "yaw": -3.946378586710127,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 9,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 45.88495622866983,
+      "yaw": -2.93830724014201,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 10,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 74.19534470125657,
+      "yaw": -17.06884204360248,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 10,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 46.66632409203955,
+      "yaw": -4.160154385648573,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 10,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 40.16146873906379,
+      "yaw": 1.1279005404544575,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 10,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 3,
+      "power": 78.56857712552159,
+      "yaw": -18.27142066988355,
+      "pitch": 12,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 10,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 71.49266086079524,
+      "yaw": -16.581621028558292,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 10,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 63.64696683789536,
+      "yaw": -13.458776067669248,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 11,
+    "item": 0,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 80.55429525495995,
+      "yaw": -19.619458860053435,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 11,
+    "item": 1,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 48.419366788932294,
+      "yaw": -5.266046660720557,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 11,
+    "item": 2,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 41.220578725643534,
+      "yaw": -0.03848261568755845,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 11,
+    "item": 3,
+    "time": 0,
+    "aim": {
+      "style": 3,
+      "power": 84.96727292235653,
+      "yaw": -19.265923977713907,
+      "pitch": 12,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 11,
+    "item": 4,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 77.49155210944878,
+      "yaw": -19.16960160515789,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  },
+  {
+    "stage": 11,
+    "item": 5,
+    "time": 0,
+    "aim": {
+      "style": 0,
+      "power": 67.56676611557539,
+      "yaw": -15.58517442430066,
+      "pitch": 0,
+      "spin": 0
+    },
+    "near": true,
+    "hits": 0
+  }
+]
