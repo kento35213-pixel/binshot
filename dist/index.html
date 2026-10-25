@@ -8,13 +8,13 @@
   <meta name="robots" content="noindex,nofollow">
   <title>BINSHOT — その一投に、すべてを。</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=1.1.0">
 </head>
 <body>
-  <canvas id="world" aria-label="3Dゲーム画面。ドラッグで左右と角度を調整できます。"></canvas>
+  <canvas id="world" aria-label="3Dゲーム画面。ドラッグで狙い、長押しでパワーをため、上へスワイプして投げます。"></canvas>
   <div id="vignette"></div><div id="impactFlash"></div>
   <div id="loading"><div class="load-logo">BIN<span>SHOT</span><i>↗</i></div><p>小さなゴミに、大きなドラマを。</p><div class="loading-bar"><i></i></div><small id="loadMessage">3Dの世界を準備しています</small></div>
-  <header class="topbar"><button id="logo" class="brand" aria-label="タイトルに戻る">BIN<span>SHOT</span><sup>↗</sup></button><div class="top-right"><span class="edition">THE EVERYDAY SPORT</span><button id="sound" class="icon-btn" aria-label="サウンド切り替え">♪</button><button id="help" class="icon-btn" aria-label="遊び方">?</button><button id="pause" class="icon-btn hidden" aria-label="一時停止">Ⅱ</button></div></header>
+  <header class="topbar"><button id="logo" class="brand" aria-label="タイトルに戻る">BIN<span>SHOT</span><sup>↗</sup></button><div class="top-right"><span class="edition">THE EVERYDAY SPORT</span><button id="hudToggle" class="icon-btn hidden" aria-label="画面の説明を表示" title="文字の表示を切り替え" aria-pressed="true"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path id="eyeSlash" d="m3 3 18 18"/></svg></button><button id="sound" class="icon-btn" aria-label="サウンド切り替え">♪</button><button id="help" class="icon-btn" aria-label="遊び方">?</button><button id="pause" class="icon-btn hidden" aria-label="一時停止">Ⅱ</button></div></header>
 
   <main id="home" class="home">
     <div class="home-copy"><div class="eyebrow"><i></i> A SMALL TOSS. A BIG MOMENT.</div><h1>その一投に、<br>すべてを<span>。</span></h1><p>ただのゴミ捨てが、ちょっとした名勝負。<br>風を読んで、狙いを定めて。決めるのは、あなたの指先。</p><div class="hero-actions"><button id="start" class="primary">ステージをはじめる <span>↗</span></button><button id="free" class="secondary">フリープレー <span>∞</span></button></div><button id="chooseStage" class="text-btn">ステージを選ぶ <span>→</span></button><div class="home-stats"><div><strong>12</strong><span>STAGES</span></div><div><strong>6</strong><span>TRASH TYPES</span></div><div><strong>∞</strong><span>ONE MORE TRY</span></div></div></div>
@@ -30,9 +30,10 @@
     <div id="slowTag" class="slow-tag hidden"><i></i> HOLD YOUR BREATH <small>SLOW MOTION</small></div>
     <div id="throwMessage" class="throw-message hidden"><span id="throwEyebrow"></span><strong id="throwTitle"></strong><p id="throwDetail"></p></div>
     <div id="aimHint" class="aim-hint">画面をドラッグで照準 · 強さを調整して投げる</div>
+    <div id="chargeHUD" class="charge-hud hidden" aria-label="投球パワー"><svg viewBox="0 0 100 100"><circle class="charge-track" cx="50" cy="50" r="43"/><circle id="chargeArc" class="charge-arc" cx="50" cy="50" r="43" pathLength="100"/></svg><span id="chargePower">5</span><i id="chargeReady">↗</i></div>
     <div class="bottom-deck" id="deck">
       <aside class="trash-card"><div class="trash-number" id="trashNumber">01</div><div class="trash-info"><span id="trashEn" class="tiny"></span><h3 id="trashName"></h3><p id="trashNote"></p><div class="trash-metrics"><span id="trashWeight"></span><span id="trashDrag"></span></div></div><div class="combo" id="combo"></div></aside>
-      <div class="shot-card"><div class="shot-top"><div class="style-tabs" id="styles"></div><button id="inputMode" class="chip" title="画面の上向きスワイプで直接投げるモード">操作：調整</button></div>
+      <div class="shot-card"><div class="shot-top"><div class="style-tabs" id="styles"></div><button id="inputMode" class="chip" title="詳細な投球設定を表示" aria-label="詳細な投球設定を表示" aria-expanded="false">⚙</button></div>
         <div class="shot-controls"><label class="power-label"><span>POWER <strong id="powerValue">35</strong><small>%</small></span><input id="power" type="range" min="5" max="100" value="35" aria-label="投げる強さ"></label><button id="throw" class="throw-btn">投げる <span>↗</span></button></div>
         <div class="fine-controls"><label><span>左右 <b id="yawValue">0°</b></span><input id="yaw" type="range" min="-32" max="32" step="0.1" value="0" aria-label="左右の狙い"></label><label><span>角度 <b id="pitchValue">44°</b></span><input id="pitch" type="range" min="-16" max="17" step="0.2" value="0" aria-label="投げる角度の微調整"></label><label><span>回転 <b id="spinValue">0</b></span><input id="spin" type="range" min="-30" max="30" step="1" value="0" aria-label="左右の回転"></label></div>
         <div class="deck-foot"><label class="check"><input type="checkbox" id="guide" checked> 短い軌道ガイド</label><span id="styleNote">標準。狙いと強さを素直に伝える。</span><button id="freeSettings" class="text-btn hidden">練習設定 ⚙</button></div>
@@ -41,7 +42,7 @@
     <div id="resultActions" class="result-actions hidden"><button id="replay" class="secondary">↺ リプレイ</button><button id="nextThrow" class="primary">次のゴミへ <span>→</span></button></div>
   </section>
 
-  <section id="replayUI" class="replay-ui hidden"><div class="replay-top"><span class="pill">● REPLAY</span><strong>もう一度、あの瞬間。</strong></div><div class="replay-bottom"><button id="replayCamera" class="secondary">視点：ゴミ箱カメラ</button><button id="replayPlay" class="icon-btn" aria-label="リプレイ再生と停止">Ⅱ</button><input id="replayProgress" type="range" min="0" max="1000" value="0" aria-label="リプレイの再生位置"><select id="replaySpeed" aria-label="リプレイ速度"><option value="0.35">0.35×</option><option value="0.65" selected>0.65×</option><option value="1">1×</option></select><button id="replayClose" class="primary">戻る →</button></div></section>
+  <section id="replayUI" class="replay-ui hidden"><div class="replay-top"><span class="pill">● REPLAY</span><strong>もう一度、あの瞬間。</strong></div><div class="replay-bottom"><select id="replayCamera" aria-label="リプレイのカメラ"></select><button id="replayPlay" class="icon-btn" aria-label="リプレイ再生と停止">Ⅱ</button><input id="replayProgress" type="range" min="0" max="1000" value="0" aria-label="リプレイの再生位置"><select id="replaySpeed" aria-label="リプレイ速度"><option value="0.35">0.35×</option><option value="0.65" selected>0.65×</option><option value="1">1×</option></select><button id="replayClose" class="primary">戻る →</button></div></section>
 
   <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-card"><button id="modalClose" class="close" aria-label="閉じる">×</button><div id="modalContent"></div></div></div>
   <div id="toast" role="status" class="toast hidden"></div><svg id="swipeLine" class="swipe-line"><path id="gesturePath"/></svg>
@@ -214,7 +215,7 @@
 </ul>
 <p>公開設定を変更した後は、必ず手順4で本番とプレビューの認証を確認してください。</p>
 </div></template>
-  <script type="module" src="./game.js"></script>
+  <script type="module" src="./game.js?v=1.1.0"></script>
   <script>window.addEventListener('error',function(e){var m=document.getElementById('loadMessage');if(document.getElementById('loading').style.display!=='none'&&m.textContent==='3Dの世界を準備しています'){m.textContent='読み込みに失敗しました。Safariでページを再読み込みしてください。';console.error(e.error);}});</script>
 </body>
 </html>

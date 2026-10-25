@@ -1,5 +1,7 @@
 import * as T from './vendor/three.module.js';
 import {binAt,playerAt,personAt,windAt,BIN_HEIGHT} from './physics.js';
+import {ThrowerAvatar} from './avatar.js?v=1.1.0';
+import {replayCamera} from './replay.js?v=1.1.0';
 
 const palette={cream:0xf1e8d6,white:0xfaf6eb,green:0x477b60,dark:0x2c473c,orange:0xea7350,wood:0xc99e75,teal:0x8bb7a4};
 const materials=new Map(), geometries=new Map();
@@ -43,9 +45,10 @@ export class View {
     this.sun.shadow.mapSize.set(1024,1024);Object.assign(this.sun.shadow.camera,{left:-12,right:12,top:12,bottom:-15,near:.5,far:35});this.sun.shadow.bias=-.0005;this.sun.shadow.normalBias=.03;this.scene.add(this.sun);
     this.environment=new T.Group();this.scene.add(this.environment);
     this.binGroup=new T.Group();this.scene.add(this.binGroup);
+    this.actor=new ThrowerAvatar();this.actor.root.visible=false;this.scene.add(this.actor.root);
     this.hand=new T.Group();this.camera.add(this.hand);this.scene.add(this.camera);
     const arm=box(this.hand,[.12,.16,.39],[.26,-.32,-.47],0xd4a283);arm.rotation.x=-.2;arm.rotation.y=-.2;
-    const sleeve=box(this.hand,[.16,.19,.35],[.29,-.37,-.28],0x6f907d);sleeve.rotation.x=-.2;
+    const sleeve=box(this.hand,[.16,.19,.35],[.29,-.37,-.28],0x659789);sleeve.rotation.x=-.2;
     const palm=sphere(this.hand,.1,[.24,-.24,-.66],0xe0ad8e,2);palm.scale.set(.8,.65,1.2);
     for(let i=0;i<4;i++){const finger=cyl(this.hand,.018,.02,.13,[.20+i*.027,-.22,-.72],0xe0ad8e,8);finger.rotation.x=1.3;}
     this.held=new T.Group();this.hand.add(this.held);this.held.position.set(.23,-.20,-.74);this.held.scale.setScalar(.67);
@@ -76,7 +79,7 @@ export class View {
   }
   setItem(item){
     if(!this.itemCache.has(item.id))this.itemCache.set(item.id,this.makeItem(item,new T.Group()));
-    const blueprint=this.itemCache.get(item.id);this.held.clear();this.trash.clear();this.held.add(blueprint.clone(true));this.trash.add(blueprint.clone(true));
+    const blueprint=this.itemCache.get(item.id);this.held.clear();this.trash.clear();this.held.add(blueprint.clone(true));this.trash.add(blueprint.clone(true));this.actor.setItem(blueprint);
   }
   setStage(stage,index) {
     this.stage=stage;this.stageIndex=index;clearEnvironment(this.environment);clearEnvironment(this.binGroup);this.people=[];
@@ -138,28 +141,32 @@ export class View {
     const wind=windAt(stage,t);this.windLines.visible=Math.hypot(wind.x,wind.z)>.8;
     this.windLines.children.forEach((l,i)=>{const s=l.userData.seed;l.position.set(((s*13+t*wind.x*.5)%16+16)%16-8,.5+(s*7%3.5),-((s*11+t*.8)%17));l.rotation.y=-Math.atan2(wind.z,wind.x);});
   }
-  update({time,mode,aim,body,flight,home=false,replay=false,view=0}) {
+  update({time,mode,aim,body,flight,home=false,replay=false,view='cinema',elapsed=0,shot=null,charge=0}) {
     this.updateEnvironment(time);const p=playerAt(this.stage,time),b=binAt(this.stage,time);
     this.trash.visible=!!body;
     if(body){this.trash.position.copy(body.position);this.trash.quaternion.copy(body.quaternion);}
-    this.hand.visible=mode==='aim'&&!home&&!replay;
+    this.actor.root.visible=replay&&view!=='firstperson';
+    if(replay)this.actor.update({stage:this.stage,time,elapsed,style:shot.aim.style,power:shot.power,yaw:shot.yaw});
+    this.hand.visible=(mode==='aim'&&!home&&!replay)||(replay&&view==='firstperson'&&elapsed<0);
     this.guide.visible=mode==='aim'&&!home&&!replay&&this.showGuide;
     if(home){
       const portrait=innerWidth<600&&innerHeight>innerWidth;
       this.camera.position.set(portrait?2.9:3.6,portrait?2.75:2.5,portrait?1.0:1.1);
       this.camera.lookAt(portrait?0:0.2,.8,portrait?-4:-4.6);
-    }else if(replay&&view===0&&body){
-      this.camera.position.set(b.x+2.5,2.1,b.z+2.5);this.camera.lookAt(body.position.x,Math.max(.45,body.position.y),body.position.z);
+    }else if(replay){
+      const camera=replayCamera(view,this.stage,time,body,elapsed,this.camera.aspect);
+      this.camera.position.set(...camera.position);this.camera.lookAt(...camera.target);
     }else{
       let y=1.67+(this.reduced?0:(this.stage.playerMove?Math.sin(time*3.2)*.018:Math.sin(time*.9)*.005));
       this.camera.position.set(p.x,y,0);
-      if(replay){this.camera.lookAt(body.position.x,Math.max(.7,body.position.y),body.position.z);}
-      else if(mode==='flight'||mode==='result'){
+      if(mode==='flight'||mode==='result'){
         const focus=body?.position||new T.Vector3(b.x,1,b.z);const blend=mode==='result'?.72:.50;
         this.camera.lookAt(p.x+(focus.x-p.x)*blend,1.25+(focus.y-1.25)*.37,b.z*.80);
       }else {
-        this.camera.rotation.order='YXZ';this.camera.rotation.set(-.08+aim.pitch*.004,-aim.yaw*Math.PI/180,0);
-        this.hand.rotation.set(0,0,-aim.spin*.001);this.hand.position.y=Math.sin(time*1.8)*.006;
+        this.camera.rotation.order='YXZ';this.camera.rotation.set(-.08+aim.pitch*.012,-aim.yaw*Math.PI/180,0);
+        const q=charge/100;
+        this.hand.rotation.set([-.45,.35,-.75,-.08][aim.style]*q,[.1,0,.12,.3][aim.style]*q,-aim.spin*.001);
+        this.hand.position.set(.025*q,(aim.style===2?-.15:.045)*q+Math.sin(time*1.8)*.006,.06*q);
       }
     }
     if(this.shake>0&&!this.reduced){this.camera.position.x+=(Math.random()-.5)*this.shake*.035;this.camera.position.y+=(Math.random()-.5)*this.shake*.035;this.shake*=.9;}

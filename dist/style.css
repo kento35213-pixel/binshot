@@ -6,3 +6,73 @@
 @media(max-height:560px) and (orientation:landscape){.topbar{top:12px;left:20px;right:20px}.brand{font-size:22px}.icon-btn{width:30px;height:30px;font-size:15px}.home-copy{left:6%;top:51%;}.home h1{font-size:39px;line-height:1.15;margin:12px 0}.home-copy>p{font-size:10px;line-height:1.7;margin-bottom:13px}.home-copy>.eyebrow{font-size:7px}.hero-actions .primary,.hero-actions .secondary{min-height:39px;font-size:10px;padding:10px 15px}.hero-actions .primary{min-width:190px}.home-stats{margin-top:9px;padding-top:10px;width:300px;gap:30px}.home-stats strong{font-size:19px}.home-stats span{font-size:6px}.home-copy>.text-btn{margin-top:2px;font-size:10px;padding:6px 0}.home-foot{bottom:12px;font-size:6px}.scene-caption{bottom:22%;right:10%;}.scene-caption strong{font-size:13px}.stage-panel{top:60px;left:20px}.stage-panel h2{font-size:17px;margin:5px 0}.stage-panel #stageGoal{display:none}.round-info{top:57px}.round-info .pill{font-size:7px;padding:4px 8px}.scoreboard{gap:9px;margin-top:6px}.scoreboard strong{font-size:20px}.scoreboard span{font-size:6px}.wind-card{top:56px;right:20px;padding:8px 11px;min-width:110px}.wind-card strong{font-size:20px}.wind-card>small{font-size:7px}.wind-card>span{font-size:8px}.bottom-deck{bottom:max(10px,var(--safe));left:20px;right:20px;align-items:end}.trash-card{width:220px;padding:12px;gap:9px}.trash-info p{display:none}.trash-info h3{font-size:15px}.trash-metrics{font-size:8px;margin-top:8px}.trash-info .tiny{font-size:7px}.shot-card{width:410px;padding:9px 13px 7px}.shot-controls{margin-top:5px;gap:15px}.power-label strong{font-size:21px}.throw-btn{height:39px;min-width:105px;font-size:12px}.style-tabs button{font-size:8px;padding:5px 7px}.chip{font-size:8px;padding:5px}.fine-controls{margin-top:3px}.fine-controls input{height:15px}.fine-controls label>span{font-size:8px}.deck-foot{margin-top:0;min-height:17px}.check{font-size:8px}.aim-hint{bottom:185px;font-size:8px;padding:5px 12px}.throw-message{top:34%}.throw-message strong{font-size:50px}.throw-message.miss strong{font-size:36px}.throw-message p{font-size:10px}.slow-tag{top:25%;font-size:8px}.result-actions{bottom:25px}.modal-card{max-height:92dvh;padding:25px 30px}.modal h2{font-size:25px;margin:7px 0}.modal p{font-size:11px}.help-grid{margin:12px 0;gap:9px}.help-grid>div{padding:11px}.help-grid p{font-size:10px}.modal-actions{margin-top:15px}.stage-grid{margin-top:15px}.stage-option{min-height:70px;padding:10px}.stage-option strong{font-size:10px}.free-options{margin-top:12px;gap:10px}.replay-bottom{padding:10px}.replay-ui{inset:60px 20px 15px}}
 .deploy-doc h2{font-size:20px;margin-top:28px;letter-spacing:-.5px}.deploy-doc h3{font-size:14px;margin-top:21px}.deploy-doc p,.deploy-doc li{font-size:11px;line-height:1.9;color:#6a7a64}.deploy-doc li{margin:8px 0}.deploy-doc a{color:#34745d;overflow-wrap:anywhere}.deploy-doc table{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed;margin:16px 0}.deploy-doc th,.deploy-doc td{padding:7px;border:1px solid #d2dac5;text-align:left;overflow-wrap:anywhere}.deploy-doc th{background:#e2e8d4}.deploy-doc code{font-size:10px;background:#e4e9d9;padding:2px 4px;overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){.slow-tag i,.loading-bar i{animation:none}}
+
+/* Play first: the scene owns the screen, controls stay within thumb reach. */
+#world{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.hold-controls:not(.at-home) .edition{display:none}
+.hold-controls .bottom-deck{left:50%;right:auto;transform:translateX(-50%);width:auto;max-width:calc(100% - 24px);bottom:max(18px,var(--safe))}
+.hold-controls .trash-card{display:none}
+.hold-controls .shot-card{width:auto;margin:0;padding:8px;background:#fbf8edcc;border:1px solid #fffc;border-radius:40px;box-shadow:0 3px 25px #283e3010}
+.hold-controls .shot-top{justify-content:center;gap:9px}
+.hold-controls .style-tabs{gap:4px}
+.hold-controls .style-tabs button{min-width:42px;height:40px;padding:6px 10px;border-radius:30px;display:flex;align-items:center;justify-content:center;gap:6px}
+.hold-controls .style-icon{font-size:22px;line-height:1;display:block}
+.hold-controls .style-name{font-size:10px}
+.hold-controls .chip{width:40px;height:40px;border-radius:50%;font-size:19px;padding:0;background:#edf0e2}
+.hold-controls:not(.advanced-open) .shot-controls,.hold-controls:not(.advanced-open) .fine-controls,.hold-controls:not(.advanced-open) .deck-foot{display:none}
+.hold-controls .aim-hint{bottom:92px}
+.hold-controls.advanced-open .bottom-deck{width:min(530px,calc(100% - 24px))}
+.hold-controls.advanced-open .shot-card{width:100%;border-radius:12px;padding:14px 18px;background:#fbf9eff0}
+.hold-controls.advanced-open .aim-hint{bottom:267px}
+.hold-controls.advanced-open .style-tabs button{height:34px;min-width:36px;padding:5px 10px}
+.hold-controls.advanced-open .style-icon{font-size:17px}
+.hold-controls.advanced-open .chip{height:34px;width:34px;font-size:17px}
+.hud-hidden:not(.at-home) .brand{visibility:hidden;pointer-events:none}
+.hud-hidden .stage-panel,.hud-hidden .round-info,.hud-hidden #distanceLabel,.hud-hidden #aimHint,.hud-hidden #slowTag,.hud-hidden #throwMessage{display:none!important}
+.hud-hidden .style-name{display:none}
+.hud-hidden .wind-card{min-width:0;width:42px;height:42px;padding:5px 8px;border-radius:50%;background:#fbf8e9b8;top:93px}
+.hud-hidden .wind-card>span,.hud-hidden .wind-card>small,.hud-hidden .wind-card strong,.hud-hidden .wind-card div>small{display:none}
+.hud-hidden .wind-card #windArrow{font-size:28px;line-height:30px}
+.hud-hidden .replay-top{display:none}
+.charge-hud{position:fixed;left:50%;bottom:calc(max(18px,var(--safe)) + 79px);transform:translateX(-50%);height:78px;width:78px;pointer-events:none;color:var(--green);filter:drop-shadow(0 2px 15px #f8f7e7b0)}
+.charge-hud svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.charge-hud circle{fill:#f8f5e7bc;stroke-width:5}
+.charge-hud .charge-track{stroke:#b0bea174}
+.charge-hud .charge-arc{fill:none;stroke:var(--orange);stroke-linecap:round;stroke-dasharray:5 100}
+.charge-hud>span{position:absolute;inset:0;display:grid;place-items:center;font-size:26px;font-variant-numeric:tabular-nums;font-weight:600}
+.charge-hud>i{position:absolute;right:-16px;top:8px;font-size:23px;font-style:normal;opacity:0;color:var(--orange)}
+.swiping .charge-hud>i{opacity:1}
+.swiping .charge-hud .charge-arc{stroke:var(--green)}
+.advanced-open .charge-hud{bottom:calc(max(18px,var(--safe)) + 248px)}
+.charging #reticle{border-color:var(--orange)}
+.replay-bottom #replayCamera{max-width:215px;width:190px;min-height:40px;padding:8px 26px 8px 11px;background:#e8eddb;border:1px solid #d7dfc8;border-radius:5px;font-size:11px;color:var(--ink);flex-shrink:0}
+@media(max-width:600px) and (orientation:portrait){
+ .hold-controls .bottom-deck{bottom:max(14px,var(--safe));left:50%;right:auto;width:auto;display:block}
+ .hold-controls .shot-card{padding:7px;border-radius:40px;width:auto}
+ .hold-controls .style-tabs button{width:40px;min-width:40px;height:40px;padding:4px 7px}
+ .hold-controls .style-name{font-size:8px}
+ .hold-controls:not(.hud-hidden) .style-tabs button{width:auto}
+ .hold-controls .aim-hint{bottom:calc(max(14px,var(--safe)) + 72px);max-width:none;right:auto;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:9px;padding:8px 12px;border-radius:25px}
+ .hold-controls.advanced-open .aim-hint{bottom:calc(max(14px,var(--safe)) + 230px)}
+ .hold-controls.advanced-open .shot-card{padding:12px 14px;border-radius:12px}
+ .hold-controls.advanced-open .style-tabs button{min-width:38px}
+ .hud-hidden .wind-card{top:75px;right:20px;width:38px;height:38px;padding:4px 7px}
+ .charge-hud{bottom:calc(max(14px,var(--safe)) + 76px);height:74px;width:74px}
+ .advanced-open .charge-hud{bottom:calc(max(14px,var(--safe)) + 238px)}
+ .replay-bottom #replayCamera{width:calc(100% - 114px);max-width:none;flex:1;font-size:10px}
+ .replay-bottom #replaySpeed{width:54px}
+ .replay-bottom #replayClose{order:6;padding:8px 16px;min-height:34px;width:100%;margin:0}
+}
+@media(max-height:560px) and (orientation:landscape){
+ .hold-controls .bottom-deck{bottom:max(9px,var(--safe))}
+ .hold-controls .shot-card{padding:5px}
+ .hold-controls .style-tabs button{height:33px;min-width:38px}
+ .hold-controls .chip{height:33px;width:33px}
+ .hold-controls .aim-hint{bottom:69px;font-size:8px}
+ .hold-controls.advanced-open .shot-card{padding:9px 13px}
+ .hold-controls.advanced-open .bottom-deck{width:430px;left:auto;right:18px;transform:none}
+ .hold-controls.advanced-open .aim-hint{display:none}
+ .charge-hud,.advanced-open .charge-hud{left:20%;bottom:60px;width:65px;height:65px}
+ .hud-hidden .wind-card{top:57px}
+ .replay-bottom #replayCamera{width:175px;font-size:10px;min-height:34px}
+}

@@ -1,10 +1,12 @@
 import {ITEMS,STAGES,STYLES,clamp} from './content.js';
 import {Simulation,STEP,releaseFor,previewArc,windAt,binAt,playerAt} from './physics.js';
-import {View} from './scene.js';
+import {View} from './scene.js?v=1.1.0';
+import {HoldThrowController} from './controls.js?v=1.1.0';
+import {REPLAY_CAMERAS,replayDuration,replaySample} from './replay.js?v=1.1.0';
 
 const $=id=>document.getElementById(id);
 const show=(id,yes=true)=>$(id).classList.toggle('hidden',!yes);
-let saved={unlocked:0,best:{},sound:true,slow:true};
+let saved={unlocked:0,best:{},sound:true,slow:true,hudHidden:true};
 try{saved={...saved,...JSON.parse(localStorage.getItem('binshot-v1')||'{}')};}catch{}
 saved.unlocked=clamp(Number(saved.unlocked)||0,0,STAGES.length-1);
 function persist(){try{localStorage.setItem('binshot-v1',JSON.stringify(saved));}catch{}}
@@ -21,7 +23,11 @@ function toast(message){$('toast').textContent=message;show('toast');clearTimeou
 let view;
 try{view=new View($('world'));}catch(e){$('loadMessage').textContent='3Dを起動できませんでした。WebGL対応のSafari / Chromeで開いてください。';throw e;}
 
-const state={mode:'home',stageIndex:0,practice:false,config:null,sim:null,itemIndex:0,previousItem:-1,bag:[],aim:{style:0,power:30,yaw:0,pitch:0,spin:0},swipe:false,shots:0,makes:0,points:0,streak:0,record:[],lastRecord:null,slow:0,slowUsed:false,scoreAt:null,modal:false,gesture:null,replayTime:0,replayPlaying:true,replayView:0,practiceItem:'random',practiceWind:null,practiceMotion:true,practiceGuide:true};
+const state={mode:'home',stageIndex:0,practice:false,config:null,sim:null,itemIndex:0,previousItem:-1,bag:[],aim:{style:0,power:30,yaw:0,pitch:0,spin:0},advanced:false,shots:0,makes:0,points:0,streak:0,record:[],lastRecord:null,slow:0,slowUsed:false,scoreAt:null,modal:false,replayTime:0,replayPlaying:true,replayView:'cinema',practiceItem:'random',practiceWind:null,practiceMotion:true,practiceGuide:true};
+const controls=new HoldThrowController();
+function applyHud(){document.body.classList.toggle('hud-hidden',saved.hudHidden);document.body.classList.toggle('advanced-open',state.advanced);$('hudToggle').setAttribute('aria-pressed',String(saved.hudHidden));$('hudToggle').setAttribute('aria-label',saved.hudHidden?'画面の説明を表示':'画面の説明を隠す');$('eyeSlash').style.display=saved.hudHidden?'':'none';$('inputMode').setAttribute('aria-expanded',String(state.advanced));}
+$('hudToggle').onclick=()=>{saved.hudHidden=!saved.hudHidden;persist();applyHud();};
+document.body.classList.add('hold-controls');applyHud();
 function randomBag(){let a=ITEMS.map((_,i)=>i);for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}if(a[a.length-1]===state.previousItem)[a[0],a[a.length-1]]=[a[a.length-1],a[0]];return a;}
 function nextItem(first=false){
   if(state.practice&&state.practiceItem!=='random')state.itemIndex=Number(state.practiceItem);
@@ -31,17 +37,16 @@ function nextItem(first=false){
   $('trashNumber').textContent=String(state.itemIndex+1).padStart(2,'0');
   const item=ITEMS[state.itemIndex];$('trashEn').textContent=item.en;$('trashName').textContent=item.name;$('trashNote').textContent=item.note;$('trashWeight').textContent=`${Math.round(item.mass*1000)} g`;$('trashDrag').textContent=`空気抵抗 ${item.drag>.95?'大':item.drag>.7?'中':'小'}`;
 }
-function setMode(mode){state.mode=mode;document.body.classList.toggle('flight',mode==='flight');document.body.classList.toggle('result',mode==='result');document.body.classList.toggle('replaying',mode==='replay');show('home',mode==='home');show('hud',!['home','replay'].includes(mode));show('pause',mode!=='home');show('replayUI',mode==='replay');show('resultActions',mode==='result');$('throw').disabled=mode!=='aim';}
+function setMode(mode){state.mode=mode;if(mode!=='aim')cancelGesture();document.body.classList.toggle('at-home',mode==='home');document.body.classList.toggle('flight',mode==='flight');document.body.classList.toggle('result',mode==='result');document.body.classList.toggle('replaying',mode==='replay');show('home',mode==='home');show('hud',!['home','replay'].includes(mode));show('pause',mode!=='home');show('hudToggle',mode!=='home');show('replayUI',mode==='replay');show('resultActions',mode==='result');$('throw').disabled=mode!=='aim';applyHud();}
 function aimUI(){
   const a=state.aim;for(let key of ['power','yaw','pitch','spin'])$(key).value=a[key];
   $('powerValue').textContent=Math.round(a.power);$('yawValue').textContent=`${a.yaw>0?'+':''}${a.yaw.toFixed(1)}°`;$('pitchValue').textContent=`${(STYLES[a.style].angle+a.pitch).toFixed(1)}°`;$('spinValue').textContent=`${a.spin>0?'+':''}${a.spin}`;
   [...$('styles').children].forEach((b,i)=>b.classList.toggle('active',a.style===i));$('styleNote').textContent=STYLES[a.style].note;
-  $('inputMode').textContent=state.swipe?'操作：スワイプ':'操作：調整';
-  $('aimHint').textContent=state.swipe?'画面を上向きスワイプして投げる。速さ・方向・長さが効く。':'画面をドラッグで照準 · 強さを調整して投げる';
+  $('aimHint').textContent='ドラッグで狙う → 長押しでためる → 上へスワイプ';
 }
-STYLES.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.name;b.title=s.note;b.addEventListener('click',()=>{if(state.mode!=='aim')return;state.aim.style=i;aimUI();});$('styles').append(b);});
+STYLES.forEach((s,i)=>{const b=document.createElement('button');b.innerHTML=`<span class="style-icon" aria-hidden="true">${['↗','⌒','⤴','➜'][i]}</span><span class="style-name">${s.name}</span>`;b.title=`${s.name}：${s.note}`;b.setAttribute('aria-label',s.name);b.addEventListener('click',()=>{if(state.mode!=='aim')return;cancelGesture();state.aim.style=i;aimUI();});$('styles').append(b);});
 for(let key of ['power','yaw','pitch','spin'])$(key).addEventListener('input',e=>{state.aim[key]=Number(e.target.value);aimUI();});
-$('inputMode').onclick=()=>{state.swipe=!state.swipe;aimUI();};
+$('inputMode').onclick=()=>{cancelGesture();state.advanced=!state.advanced;applyHud();};
 $('guide').onchange=()=>view.showGuide=$('guide').checked;
 $('sound').onclick=()=>{saved.sound=!saved.sound;persist();updateSound();initAudio();if(saved.sound)tone(660,.1);};
 function updateSound(){$('sound').textContent=saved.sound?'♪':'♩';$('sound').style.opacity=saved.sound?'1':'.5';$('sound').setAttribute('aria-label',saved.sound?'サウンドをオフ':'サウンドをオン');}
@@ -60,7 +65,7 @@ function updateHUD(){
   $('makes').textContent=state.makes;$('remaining').textContent=state.practice?'∞':Math.max(0,state.config.shots-state.shots);
   $('combo').textContent=state.streak>1?`${state.streak} IN A ROW · ${state.points} pts`:state.points?`${state.points} pts`:'';
 }
-function goHome(){closeModal();setMode('home');state.sim=new Simulation(STAGES[0]);state.config=STAGES[0];view.setStage(STAGES[0],0);view.setItem(ITEMS[0]);show('throwMessage',false);show('slowTag',false);state.gesture=null;$('gesturePath').setAttribute('d','');}
+function goHome(){closeModal();setMode('home');state.sim=new Simulation(STAGES[0]);state.config=STAGES[0];view.setStage(STAGES[0],0);view.setItem(ITEMS[0]);show('throwMessage',false);show('slowTag',false);cancelGesture();}
 $('logo').onclick=()=>{if(state.mode==='home')return;pauseModal();};
 $('start').onclick=()=>loadStage(saved.unlocked,false);
 $('free').onclick=()=>freeModal(false);
@@ -68,6 +73,7 @@ $('chooseStage').onclick=()=>stageModal(false);
 function launch(swipe){
   if(state.mode!=='aim'||state.modal)return;
   initAudio();const item=ITEMS[state.itemIndex],release=releaseFor(state.config,state.sim.time,state.aim,item,swipe);
+  state.shotMeta={aim:{...state.aim},yaw:release.yaw,pitch:release.pitch,power:release.power,launchTime:state.sim.time,release:structuredClone(release)};
   state.shots++;state.scoreAt=null;state.slow=0;state.slowUsed=false;state.record=[];state.release={...release};state.hitCount=0;state.success=false;state.clean=false;
   state.sim.launch(item,release);state.sim.onImpact=(strength,group)=>{state.hitCount++;if(strength>1)tone(group===2?360:110,.1,'triangle',Math.min(.11,strength*.012),0,group===2?190:50);};
   state.sim.onScore=()=>{
@@ -86,7 +92,7 @@ function finish(){
     let detail=state.sim.humanHit?'通行人にコツン。次はタイミングを変えよう。':miss<state.config.radius+1.1?'あと少し。狙いか強さを、ほんのちょっと。':b.position.z>target.z?'手前に落ちた。強さを上げるか、角度を変えよう。':'奥へ抜けた。強さを少し下げてみよう。';
     message('ONE MORE TRY.',state.sim.humanHit?'おっと、失礼。':miss<state.config.radius+1.1?'惜しい！':'もう一投。',detail,true);tone(170,.2,'sine',.04,0,125);updateHUD();
   }
-  show('slowTag',false);state.lastRecord={frames:state.record.map(f=>({...f})),itemIndex:state.itemIndex,success:state.success,stage:{...state.config}};
+  show('slowTag',false);state.lastRecord={...state.shotMeta,frames:state.record.map(f=>({...f})),itemIndex:state.itemIndex,success:state.success,stage:{...state.config}};
   if(!state.practice&&state.makes>=state.config.goal){
     saved.unlocked=Math.min(STAGES.length-1,Math.max(saved.unlocked,state.stageIndex+1));
     saved.best[state.stageIndex]=Math.max(saved.best[state.stageIndex]||0,state.points);persist();
@@ -104,9 +110,9 @@ $('nextThrow').onclick=()=>{
 function openModal(html){cancelGesture();$('modalContent').innerHTML=html;show('modal');$('modalContent').parentElement.scrollTop=0;state.modal=true;$('modalClose').focus();}
 function closeModal(){show('modal',false);state.modal=false;}
 $('modalClose').onclick=closeModal;$('modal').addEventListener('pointerdown',e=>{if(e.target===$('modal'))closeModal();});
-function helpModal(){openModal(`<div class="eyebrow">HOW TO PLAY</div><h2 id="modalTitle">ちょっとの差が、気持ちいい。</h2><p>ゴミ箱の中へ、下向きに落とせば成功。縁に当たっても、そのまま入ればOKです。</p><div class="help-grid"><div><b>01 / 狙いを合わせる</b><p>画面を左右・上下にドラッグ。下の「左右」「角度」でも微調整できます。</p></div><div><b>02 / 強さを決める</b><p>POWERを調整して「投げる」。最初は24%前後から。手前なら強め、奥なら弱めに。</p></div><div><b>03 / 投げ方を変える</b><p>山なりで人を越える、ライナーで風を切る。回転を加えるとわずかに曲がります。</p></div><div><b>04 / 指先で投げる</b><p>「操作：スワイプ」に切り替えて、画面を上へ。速さで強さ、長さで角度、横ずれで方向が変わります。</p></div></div><p><span class="key">Space</span> 投げる　<span class="key">← →</span> 左右　<span class="key">↑ ↓</span> 角度　<span class="key">＋ −</span> 強さ　<span class="key">1〜4</span> 投げ方　<span class="key">R</span> リプレイ　<span class="key">Esc</span> 一時停止<br>短い点線は出だしだけの目安。風や回転、衝突は最後まで物理演算されます。練習では環境やゴミを固定できます。</p><div class="modal-actions"><button class="primary" id="helpDone">さあ、投げよう ↗</button><button class="secondary" id="deployGuide">公開手順を見る →</button></div>`);$('helpDone').onclick=closeModal;$('deployGuide').onclick=()=>openModal($('deployInstructions').innerHTML);}
+function helpModal(){openModal(`<div class="eyebrow">HOW TO PLAY / 1.1</div><h2 id="modalTitle">狙って、ためて、スッ。</h2><div class="help-grid"><div><b>01 / 指を動かして狙う</b><p>長押し前はドラッグで視点と投球角度を調整できます。狙った場所で指を止めて、そのまま押し続けます。</p></div><div><b>02 / 長押しでためる</b><p>約0.3秒止めるとパワーゲージが出現。押している時間で5〜100%まで上昇します。最初の紙は20〜25%前後が目安。</p></div><div><b>03 / 上へスワイプ</b><p>スワイプを始めた瞬間にパワーが固定。指を離すと投げます。斜めなら左右、長さで高さが変わります。スワイプせず離すと中止。</p></div><div><b>04 / 見たいものだけ</b><p>目のボタンで文字を表示・非表示に。下の4つの記号が投げ方です。⚙でスライダーと投球ボタンも使えます。</p></div></div><p>リプレイは投げる直前から再生。カメラの選択欄で全身・ゴミ箱正面・俯瞰など7視点を切り替えられます。<br><span class="key">Space</span> 投げる　<span class="key">H</span> 文字表示　<span class="key">1〜4</span> 投げ方　<span class="key">R</span> リプレイ　<span class="key">Esc</span> 一時停止</p><div class="modal-actions"><button class="primary" id="helpDone">プレーに戻る ↗</button><button class="secondary" id="deployGuide">公開手順 →</button></div>`);$('helpDone').onclick=closeModal;$('deployGuide').onclick=()=>openModal($('deployInstructions').innerHTML);}
 $('help').onclick=helpModal;
-function pauseModal(){openModal(`<div class="eyebrow">TAKE A BREATH</div><h2 id="modalTitle">ひと息、つこう。</h2><div class="setting-row"><span>入りそうなときのスローモーション</span><input id="slowSetting" type="checkbox" ${saved.slow?'checked':''}></div><div class="setting-row"><span>サウンド</span><input id="soundSetting" type="checkbox" ${saved.sound?'checked':''}></div><p>ゲームは一時停止中です。</p><div class="modal-actions"><button class="primary" id="resume">プレーを続ける ↗</button><button class="secondary" id="restart">このステージをやり直す</button><button class="secondary" id="backHome">タイトルへ</button></div>`);$('slowSetting').onchange=e=>{saved.slow=e.target.checked;persist();};$('soundSetting').onchange=e=>{saved.sound=e.target.checked;updateSound();persist();};$('resume').onclick=closeModal;$('restart').onclick=()=>loadStage(state.stageIndex,state.practice);$('backHome').onclick=goHome;}
+function pauseModal(){openModal(`<div class="eyebrow">TAKE A BREATH</div><h2 id="modalTitle">ひと息、つこう。</h2><div class="setting-row"><span>入りそうなときのスローモーション</span><input id="slowSetting" type="checkbox" ${saved.slow?'checked':''}></div><div class="setting-row"><span>サウンド</span><input id="soundSetting" type="checkbox" ${saved.sound?'checked':''}></div><div class="setting-row"><span>プレー中の説明を隠す</span><input id="hudSetting" type="checkbox" ${saved.hudHidden?'checked':''}></div><p>ゲームは一時停止中です。</p><div class="modal-actions"><button class="primary" id="resume">プレーを続ける ↗</button><button class="secondary" id="restart">このステージをやり直す</button><button class="secondary" id="backHome">タイトルへ</button></div>`);$('slowSetting').onchange=e=>{saved.slow=e.target.checked;persist();};$('soundSetting').onchange=e=>{saved.sound=e.target.checked;updateSound();persist();};$('hudSetting').onchange=e=>{saved.hudHidden=e.target.checked;persist();applyHud();};$('resume').onclick=closeModal;$('restart').onclick=()=>loadStage(state.stageIndex,state.practice);$('backHome').onclick=goHome;}
 $('pause').onclick=pauseModal;
 function stageModal(practice){
   openModal(`<div class="eyebrow">${practice?'FREE PLAY':'STAGE SELECT'}</div><h2 id="modalTitle">今日は、どこで投げる？</h2><p>${practice?'練習では全ステージを選べます。':'クリアすると次のステージが開きます。練習なら全ステージを体験できます。'}</p><div class="stage-grid">${STAGES.map((s,i)=>`<button class="stage-option ${saved.best[i]?'completed':''}" data-stage="${i}" ${!practice&&i>saved.unlocked?'disabled':''}><span>${String(i+1).padStart(2,'0')} ${!practice&&i>saved.unlocked?'· LOCKED':saved.best[i]?'· CLEAR':''}</span><strong>${s.name}</strong><small>${s.distance.toFixed(1)} m / ${s.place==='office'?'OFFICE':s.place==='park'?'PARK':'ROOFTOP'}</small></button>`).join('')}</div>`);
@@ -124,32 +130,49 @@ function clearModal(){
   $('advance').onclick=()=>all?goHome():loadStage(state.stageIndex+1,false);$('clearReplay').onclick=()=>{closeModal();startReplay();};
 }
 function retryModal(){openModal(`<div class="eyebrow">A LITTLE BETTER, EVERY TOSS.</div><h2 id="modalTitle">あと${Math.max(0,state.config.goal-state.makes)}個、届かなかった。</h2><p>${state.shots}投で${state.makes}回成功。ゴミの種類によって強さを変えるのがコツ。練習モードで同じゴミを固定して試すこともできます。</p><div class="modal-actions"><button id="tryAgain" class="primary">もう一度挑戦 ↗</button><button id="retryFree" class="secondary">このステージを練習</button></div>`);$('tryAgain').onclick=()=>loadStage(state.stageIndex,false);$('retryFree').onclick=()=>loadStage(state.stageIndex,true);}
-function startReplay(){if(!state.lastRecord){toast('投げた後にリプレイできます');return;}closeModal();state.replayTime=0;state.replayPlaying=true;state.replayView=0;$('replayCamera').textContent='視点：ゴミ箱カメラ';$('replayPlay').textContent='Ⅱ';show('throwMessage',false);setMode('replay');}
+for(const c of REPLAY_CAMERAS){const option=document.createElement('option');option.value=c.id;option.textContent=c.name;$('replayCamera').append(option);}
+function startReplay(){if(!state.lastRecord){toast('投げた後にリプレイできます');return;}closeModal();state.replayTime=0;state.replayPlaying=true;state.replayView='cinema';$('replayCamera').value=state.replayView;$('replayPlay').textContent='Ⅱ';show('throwMessage',false);setMode('replay');}
 $('replay').onclick=startReplay;$('replayClose').onclick=()=>{setMode('result');show('throwMessage');};
-$('replayCamera').onclick=()=>{state.replayView=1-state.replayView;$('replayCamera').textContent=state.replayView?'視点：プレイヤー':'視点：ゴミ箱カメラ';};
-$('replayPlay').onclick=()=>{state.replayPlaying=!state.replayPlaying;if(state.replayTime>=state.lastRecord.frames.length-1)state.replayTime=0;$('replayPlay').textContent=state.replayPlaying?'Ⅱ':'▶';};
-$('replayProgress').oninput=e=>{state.replayTime=Number(e.target.value)/1000*(state.lastRecord.frames.length-1);};
+$('replayCamera').onchange=e=>{state.replayView=e.target.value;};
+$('replayPlay').onclick=()=>{state.replayPlaying=!state.replayPlaying;if(state.replayTime>=replayDuration(state.lastRecord))state.replayTime=0;$('replayPlay').textContent=state.replayPlaying?'Ⅱ':'▶';};
+$('replayProgress').oninput=e=>{state.replayTime=Number(e.target.value)/1000*replayDuration(state.lastRecord);};
 
-function cancelGesture(){state.gesture=null;$('gesturePath').setAttribute('d','');}
+function cancelGesture(){const id=controls.gesture?.id;controls.cancel();if(id!==undefined&&$('world').hasPointerCapture(id))$('world').releasePointerCapture(id);$('gesturePath').setAttribute('d','');show('chargeHUD',false);document.body.classList.remove('charging','swiping');}
+function syncGesture(input){
+  if(!input)return;
+  state.aim={...input.aim};
+  const charging=input.phase!=='look';
+  if(charging)state.aim.power=input.power;
+  document.body.classList.toggle('charging',charging);document.body.classList.toggle('swiping',input.phase==='swipe');show('chargeHUD',charging);
+  $('chargePower').textContent=Math.round(input.power);$('chargeArc').style.strokeDasharray=`${input.power} 100`;
+  if(input.phase==='swipe'){
+    const points=[[input.chargeX,input.chargeY],...input.trail];$('gesturePath').setAttribute('d',points.map((p,i)=>(i?'L':'M')+p.join(' ')).join(' '));
+  }
+  aimUI();
+}
+$('world').addEventListener('contextmenu',e=>e.preventDefault());
 $('world').addEventListener('pointerdown',e=>{
-  if(state.mode!=='aim'||state.modal)return;
-  $('world').setPointerCapture(e.pointerId);state.gesture={id:e.pointerId,x:e.clientX,y:e.clientY,start:performance.now(),yaw:state.aim.yaw,pitch:state.aim.pitch,points:[[e.clientX,e.clientY]]};
+  if(state.mode!=='aim'||state.modal||e.isPrimary===false||e.button!==0)return;
+  if(!controls.begin({id:e.pointerId,x:e.clientX,y:e.clientY,time:performance.now(),aim:state.aim,width:innerWidth,height:innerHeight}))return;
+  e.preventDefault();$('world').setPointerCapture(e.pointerId);initAudio();
 });
 $('world').addEventListener('pointermove',e=>{
-  const g=state.gesture;if(!g||e.pointerId!==g.id)return;
-  if(!state.swipe){state.aim.yaw=clamp(g.yaw+(e.clientX-g.x)/innerWidth*42,-32,32);state.aim.pitch=clamp(g.pitch-(e.clientY-g.y)/innerHeight*28,-16,17);aimUI();}
-  else{g.points.push([e.clientX,e.clientY]);$('gesturePath').setAttribute('d',g.points.map((p,i)=>(i?'L':'M')+p.join(' ')).join(' '));}
+  syncGesture(controls.move({id:e.pointerId,x:e.clientX,y:e.clientY,time:performance.now()}));
 });
 $('world').addEventListener('pointerup',e=>{
-  const g=state.gesture;if(!g||e.pointerId!==g.id)return;
-  if(state.swipe){const dy=g.y-e.clientY,dx=e.clientX-g.x,elapsed=Math.max(.08,(performance.now()-g.start)/1000);if(dy>30){const speed=dy/innerHeight/elapsed;launch({x:clamp(dx/innerWidth*26,-12,12),y:clamp((dy/innerHeight-.25)*27,-7,11),speed:clamp((speed-.65)*15,-12,26)});}else toast('画面を上向きにスワイプして投げよう');}
+  const result=controls.end({id:e.pointerId,x:e.clientX,y:e.clientY,time:performance.now()});
+  if(!result)return;
   cancelGesture();
+  if(result.type==='throw'){state.aim={...result.aim};launch(result.swipe);}
 });
 $('world').addEventListener('pointercancel',cancelGesture);
+$('world').addEventListener('lostpointercapture',cancelGesture);
+addEventListener('resize',cancelGesture);addEventListener('blur',cancelGesture);
 addEventListener('keydown',e=>{
-  if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement)return;
   if(e.code==='Escape'){if(state.modal)closeModal();else if(state.mode==='replay')$('replayClose').click();else if(state.mode!=='home')pauseModal();return;}
+  if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement)return;
   if(state.modal)return;
+  if(e.code==='KeyH'&&state.mode!=='home'){$('hudToggle').click();return;}
   if(e.code==='KeyR'&&state.mode==='result'){startReplay();return;}
   if(state.mode!=='aim')return;
   if(['Space','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();
@@ -168,7 +191,7 @@ addEventListener('keydown',e=>{
 document.addEventListener('keydown',e=>{if(!state.modal||e.key!=='Tab')return;const list=[...$('modal').querySelectorAll('button:not([disabled]),input,select,a[href]')];if(!list.length)return;const first=list[0],last=list.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
 
 let last=performance.now(),accumulator=0,lastHud=0,hiddenPause=false;
-document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenPause=true;}else{last=performance.now();accumulator=0;hiddenPause=false;if(state.mode==='flight'&&!state.modal)pauseModal();}});
+document.addEventListener('visibilitychange',()=>{cancelGesture();if(document.hidden){hiddenPause=true;}else{last=performance.now();accumulator=0;hiddenPause=false;if(state.mode==='flight'&&!state.modal)pauseModal();}});
 function frame(now){
   requestAnimationFrame(frame);
   const realDt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;
@@ -176,12 +199,11 @@ function frame(now){
   const sim=state.sim;
   if(!sim)return;
   if(state.mode==='replay'){
-    const frames=state.lastRecord.frames;
-    if(!state.modal&&state.replayPlaying)state.replayTime+=realDt/STEP*Number($('replaySpeed').value);
-    if(state.replayTime>=frames.length-1){state.replayTime=frames.length-1;state.replayPlaying=false;$('replayPlay').textContent='▶';}
-    const i=Math.floor(state.replayTime),f=state.replayTime-i,a=frames[i],b=frames[Math.min(i+1,frames.length-1)];
-    const body={position:{x:a.p[0]+(b.p[0]-a.p[0])*f,y:a.p[1]+(b.p[1]-a.p[1])*f,z:a.p[2]+(b.p[2]-a.p[2])*f},quaternion:{x:a.q[0],y:a.q[1],z:a.q[2],w:a.q[3]}};
-    view.update({time:a.t+(b.t-a.t)*f,mode:'replay',aim:state.aim,body,replay:true,view:state.replayView});$('replayProgress').value=state.replayTime/(frames.length-1)*1000;
+    const duration=replayDuration(state.lastRecord);
+    if(!state.modal&&state.replayPlaying)state.replayTime+=realDt*Number($('replaySpeed').value);
+    if(state.replayTime>=duration){state.replayTime=duration;state.replayPlaying=false;$('replayPlay').textContent='▶';}
+    const sample=replaySample(state.lastRecord,state.replayTime);
+    view.update({...sample,mode:'replay',aim:state.lastRecord.aim,replay:true,view:state.replayView,shot:state.lastRecord});$('replayProgress').value=state.replayTime/duration*1000;
   }else{
     if(!state.modal){
       if(state.mode==='flight'){
@@ -195,11 +217,12 @@ function frame(now){
           if((state.success&&sim.flight-state.scoreAt>.75)||(!state.success&&sim.settled()))finish();
         }
       }else if(state.mode!=='result'){
+        if(state.mode==='aim')syncGesture(controls.advance(now));
         // Environment clock advances while aiming; no projectile outcome is decided here.
         sim.setTime(sim.time+realDt);accumulator=0;
       }
     }
-    view.update({time:sim.time,mode:state.mode,aim:state.aim,body:sim.body,flight:sim.flight,home:state.mode==='home'});
+    view.update({time:sim.time,mode:state.mode,aim:state.aim,body:sim.body,flight:sim.flight,home:state.mode==='home',charge:controls.gesture?.phase!=='look'&&controls.gesture?state.aim.power:0});
     if(state.mode==='aim')view.setGuide(previewArc(state.config,sim.time,ITEMS[state.itemIndex],releaseFor(state.config,sim.time,state.aim,ITEMS[state.itemIndex])));
   }
   if(!state.modal)view.effects(realDt);
@@ -214,4 +237,4 @@ goHome();aimUI();requestAnimationFrame(frame);
 requestAnimationFrame(()=>{setTimeout(()=>{$('loading').style.display='none';},220);});
 
 // Read-only diagnostics for reproducible physics checks and support.
-window.binshot={version:'1.0.0',get status(){return {mode:state.mode,stage:state.stageIndex+1,item:ITEMS[state.itemIndex].id,shots:state.shots,makes:state.makes,physicsStep:STEP,body:state.sim?.body?.position.toArray(),rendererCalls:view.renderer.info.render.calls,recordedFrames:state.record.length};}};
+window.binshot={version:'1.1.0',get status(){return {mode:state.mode,stage:state.stageIndex+1,item:ITEMS[state.itemIndex].id,shots:state.shots,makes:state.makes,inputPhase:controls.gesture?.phase??'idle',hudHidden:saved.hudHidden,replayCamera:state.replayView,physicsStep:STEP,body:state.sim?.body?.position.toArray(),rendererCalls:view.renderer.info.render.calls,recordedFrames:state.record.length};}};
